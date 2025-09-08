@@ -1,0 +1,6 @@
+@RankingEngine_HostAddress = http://localhost:5244
+
+GET {{RankingEngine_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
