@@ -20,7 +20,6 @@ namespace RankingEngine.DomainService
     {
         private readonly HttpClient _http;
         private readonly ILogger<ApiService> _logger;
-        private readonly bool _useNewtonsoft;
 
         public ApiService(HttpClient http, ILogger<ApiService> logger)
         {
