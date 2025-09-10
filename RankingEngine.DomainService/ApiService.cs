@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Polly.Extensions.Http;
+using Polly;
 using RankingEngine.DomainService.Abstractions;
 using RankingEngine.Dto.ApiRequestResponse;
 using System.Text;
+using System;
 
 
 namespace RankingEngine.DomainService
@@ -18,7 +21,7 @@ namespace RankingEngine.DomainService
             _logger = logger;
         }
 
-        public async Task<ApiResponseDto<T>> SendAsync<T>(ApiRequestDto apiRequestDto, CancellationToken cancellationToken = default)
+        public async Task<ApiResponseDto<T>> SendAsync<T>(ApiRequestDto apiRequestDto, ResiliencePolicyOptions resiliencePolicy, CancellationToken cancellationToken = default)
         {
             var finalUrl = BuildUri(apiRequestDto.Url, apiRequestDto.QueryParams);
             using var request = new HttpRequestMessage(apiRequestDto.Method, finalUrl);
@@ -30,7 +33,14 @@ namespace RankingEngine.DomainService
 
             _logger.LogDebug("Sending {Method} {Url}", apiRequestDto.Method, finalUrl);
 
-            var response = await _http.SendAsync(request, cancellationToken);
+            var retryPolicy = GetRetryPolicy(resiliencePolicy.RetryEnable, resiliencePolicy.RetryCount, resiliencePolicy.RetryPowAttempt) ?? Policy.NoOpAsync<HttpResponseMessage>();
+            var cbPolicy = GetCircuitBreakerPolicy(resiliencePolicy.CircuitBreakerEnable, resiliencePolicy.CircuitBreakerFailuresAllowed, resiliencePolicy.CircuitBreakerBreakDurationSeconds)
+                           ?? Policy.NoOpAsync<HttpResponseMessage>();
+
+            var policyWrap = Policy.WrapAsync(retryPolicy, cbPolicy);
+
+
+            var response = await policyWrap.ExecuteAsync(() => _http.SendAsync(request, cancellationToken));
             var raw = await response.Content.ReadAsStringAsync(cancellationToken);
 
             if (!response.IsSuccessStatusCode)
@@ -78,6 +88,34 @@ namespace RankingEngine.DomainService
                     request.Content?.Headers.TryAddWithoutValidation(k, v);
             }
         }
+        private IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(bool enable, int retryCount, int powAttempt)
+        {
+            if (!enable) return null;
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .WaitAndRetryAsync(
+                    retryCount,
+                    sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(powAttempt, attempt)),
+                    (outcome, timespan, retryAttempt, context) =>
+                    {
+                        _logger.LogDebug($"Retry {retryAttempt} after {timespan.TotalSeconds}s");
+                    });
+        }
+
+        private IAsyncPolicy<HttpResponseMessage>? GetCircuitBreakerPolicy(bool enable, int failuresAllowed, int breakDurationSeconds)
+        {
+            if (!enable) return null;
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .CircuitBreakerAsync(
+                    failuresAllowed,
+                    TimeSpan.FromSeconds(breakDurationSeconds),
+                    onBreak: (outcome, timespan) => _logger.LogDebug($"Circuit open for {timespan.TotalSeconds}s"),
+                    onReset: () => _logger.LogDebug("Circuit closed"),
+                    onHalfOpen: () => _logger.LogDebug("Circuit half-open, testing...")
+                );
+        }
+
         #endregion
 
     }

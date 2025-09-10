@@ -4,6 +4,6 @@ namespace RankingEngine.DomainService.Abstractions
 {
     public interface IApiService
     {
-        Task<ApiResponseDto<T>> SendAsync<T>(ApiRequestDto apiRequestDto, CancellationToken cancellationToken = default);
+        Task<ApiResponseDto<T>> SendAsync<T>(ApiRequestDto apiRequestDto, ResiliencePolicyOptions resiliencePolicy, CancellationToken cancellationToken = default);
     }
 }

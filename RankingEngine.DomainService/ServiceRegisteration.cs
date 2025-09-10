@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
+using RankingEngine.DomainService.Abstractions;
 using System.Reflection;
 
 namespace RankingEngine.DomainService
@@ -12,7 +15,8 @@ namespace RankingEngine.DomainService
 
             services.AddAutoMapper(assembly);
 
-          
+            services.AddHttpClient<IApiService, ApiService>();
+
             return services;
         }
     }
