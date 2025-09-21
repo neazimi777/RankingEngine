@@ -28,6 +28,10 @@ namespace RankingEngine.Persistence.Repositories
         {
             return await _collection.Find(Builders<T>.Filter.Eq("_id", new ObjectId(id))).FirstOrDefaultAsync();
         }
+        public async Task<IFindFluent<T, T>> GetQueryFilter(FilterDefinition<T> filter)
+        {
+            return _collection.Find(filter ?? Builders<T>.Filter.Empty);
+        }
         public async Task AddAsync(T entity)
         {
             await _collection.InsertOneAsync(entity);

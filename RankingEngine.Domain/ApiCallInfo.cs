@@ -14,9 +14,9 @@ namespace RankingEngine.Domain
         public string RegisteryEmailPass { get; set; }
         public int MaxCallPerMonth { get; set; }
         public int MaxCallPerHour { get; set; }
-        public TimeOnly LatestCallTime { get; set; }
+        public DateTime LatestCallTime { get; set; }
         public int CallCount { get; set; }
-        public TimeOnly DellayPerCall { get; set; }
+        public TimeSpan DellayPerCall { get; set; }
         public DateTime ExpirationDate { get; set; }
         public DateTime CreationDate { get; set; }
 

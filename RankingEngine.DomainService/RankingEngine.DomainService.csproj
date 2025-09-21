@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RankingEngine.Domain\RankingEngine.Domain.csproj" />
     <ProjectReference Include="..\RankingEngine.Dto\RankingEngine.Dto.csproj" />
   </ItemGroup>
 
