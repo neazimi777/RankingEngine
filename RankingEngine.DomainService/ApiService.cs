@@ -6,6 +6,7 @@ using RankingEngine.DomainService.Abstractions;
 using RankingEngine.Dto.ApiRequestResponse;
 using System.Text;
 using System;
+using RankingEngine.Domain.Exceptions;
 
 
 namespace RankingEngine.DomainService
@@ -46,7 +47,7 @@ namespace RankingEngine.DomainService
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogWarning("Request to {Url} failed {StatusCode}", finalUrl, (int)response.StatusCode);
-                return new ApiResponseDto<T>((int)response.StatusCode, response.Content.ToString());
+                throw new BaseException(response.Content.ToString(), (int)response.StatusCode);
             }
 
             if (typeof(T) == typeof(string))

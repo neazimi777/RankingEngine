@@ -8,8 +8,8 @@ namespace RankingEngine.Domain.Repositories
         Task<T> GetByIdAsync(string id);
         Task<List<T>> GetAllAsync(FilterDefinition<T> filter, int page = 2, int pagesize = 10);
         Task<IFindFluent<T, T>> GetQueryFilter(FilterDefinition<T> filter);
-        Task AddAsync(T entity);
-        Task DeleteAsync(string id);
-        Task UpdateAsync(string id, T entity);
+        Task<bool> AddAsync(T entity);
+        Task<bool> DeleteAsync(string id);
+        Task<bool> UpdateAsync(string id, T entity);
     }
 }

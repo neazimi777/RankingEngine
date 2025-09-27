@@ -32,17 +32,20 @@ namespace RankingEngine.Persistence.Repositories
         {
             return _collection.Find(filter ?? Builders<T>.Filter.Empty);
         }
-        public async Task AddAsync(T entity)
+        public async Task<bool> AddAsync(T entity)
         {
             await _collection.InsertOneAsync(entity);
+            return true;
         }
-        public async Task DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id)
         {
-            await _collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", new ObjectId(id)));
+            var result = await _collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", new ObjectId(id)));
+            return result.DeletedCount > 0;
         }
-        public async Task UpdateAsync(string id, T entity)
+        public async Task<bool> UpdateAsync(string id, T entity)
         {
-            await _collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", new ObjectId(id)), entity);
+            var result = await _collection.ReplaceOneAsync(Builders<T>.Filter.Eq("_id", new ObjectId(id)), entity);
+            return result.ModifiedCount > 0 || result.UpsertedId != null;
         }
 
     }

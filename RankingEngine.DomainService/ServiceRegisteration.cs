@@ -19,7 +19,7 @@ namespace RankingEngine.DomainService
             services.AddAutoMapper(assembly);
 
             services.AddHttpClient<IApiService, ApiService>();
-            services.AddHttpClient<IJobScheduler, JobScheduler>();
+            services.AddHttpClient<IJobSchedulerService, JobSchedulerService>();
 
             #region Hangfire Config 
 

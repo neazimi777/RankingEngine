@@ -1,6 +1,6 @@
 ﻿namespace RankingEngine.DomainService.Abstractions
 {
-    public interface IJobScheduler
+    public interface IJobSchedulerService
     {
         public void EnqueueJob<TJob>() where TJob : IJobTask;
         public void ScheduleDelayedJob<TJob>(TimeSpan delay) where TJob : IJobTask;

@@ -8,6 +8,7 @@ namespace RankingEngine.Domain
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string Id { get; set; }
         public string CityName { get; set; }
+        public string CountryName { get; set; }
         public string DisplayName { get; set; }
         public double LatCenter { get; set; }
         public double LonCenter { get; set; }

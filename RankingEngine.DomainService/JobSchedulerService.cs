@@ -3,7 +3,7 @@ using RankingEngine.DomainService.Abstractions;
 
 namespace RankingEngine.DomainService
 {
-    public class JobScheduler : IJobScheduler
+    public class JobSchedulerService : IJobSchedulerService
     {
         public void EnqueueJob<TJob>() where TJob : IJobTask
         {
