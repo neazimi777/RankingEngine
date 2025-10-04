@@ -48,5 +48,10 @@ namespace RankingEngine.Persistence.Repositories
             return result.ModifiedCount > 0 || result.UpsertedId != null;
         }
 
+        public async Task<bool> AddRangeAsync(List<T> entities)
+        {
+            await _collection.InsertManyAsync(entities);
+            return true;
+        }
     }
 }

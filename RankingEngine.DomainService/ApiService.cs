@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Polly.Extensions.Http;
 using Polly;
+using Polly.Extensions.Http;
+using RankingEngine.Domain.Exceptions;
 using RankingEngine.DomainService.Abstractions;
 using RankingEngine.Dto.ApiRequestResponse;
 using System.Text;
-using System;
-using RankingEngine.Domain.Exceptions;
 
 
 namespace RankingEngine.DomainService

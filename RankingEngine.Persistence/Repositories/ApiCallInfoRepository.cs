@@ -10,7 +10,7 @@ namespace RankingEngine.Persistence.Repositories
         {
         }
 
-        public async Task<string> GetActiveApiKey(string apiName, string id)
+        public async Task<ApiCallInfo> GetActiveApiKey(string apiName, string id)
         {
             var filter = Builders<ApiCallInfo>.Filter.Empty;
             DateTime currentDate = DateTime.UtcNow;
